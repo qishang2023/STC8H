@@ -1,12 +1,9 @@
 #include "bsp_Timer.h"
-#include "bsp_KEY.H"
-#include "bsp_RTC.h"
-#include "bsp_I2C.h"
-
 
 u32 sys_time = 0;
 u8 last_key_stat = 1;
 u8 dat[7]={0,0,0,0,0,0,0};
+RTC_clock clock;
 void Timer_init(){
     TIM_InitTypeDef		TIM_InitStructure;						//结构定义
 
@@ -30,6 +27,7 @@ void Timer0_ISR_Handler (void) interrupt TMR0_VECTOR		//进中断时已经清除标志
     }
 	if(sys_time == 1000){
 		sys_time = 0;
-		I2C_ReadNbyte(PCF8563_ADDR, PCF8563_REG_TD, &dat, 7);
+		I2C_ReadNbyte(PCF8563_ADDR, PCF8563_REG_TD, &dat,NUMBER);
+		RTC_ReadTime(&clock);
 	}
 }

@@ -3,6 +3,7 @@
 #include "bsp_I2C.h"
 #include "Delay.h"
 #include "bsp_Timer.h"
+#include "bsp_RTC.h"
 
 extern u8 dat[7];
 
@@ -13,6 +14,7 @@ void main(){
     u8 mem_addr = 0x02;
     // 用于接收从机传来的数据
     u8 tem[7]={0x50,0x35,0x21,0x31,0x00,0x92,0x23};
+    // RTC_clock clock;
 	// 保存时间信息
     // u8 second, minute, hour, day, week, month;
     // u16 year;
@@ -53,8 +55,8 @@ void main(){
         nixie_display((int)(dat[0] >> 4),7); 
         nixie_display((int)(dat[0] & 0x0F),8); 
 
-        // printf("%d:%d:%d \n", (int)year, (int)month, (int)day);
-        // printf("%d:%d:%d \n", (int)hour, (int)minute, (int)second);
+        // printf("%d:%d:%d \n", (int)(clock.year), (int)(clock.month), (int)(clock.day));
+        // printf("%d:%d:%d \n", (int)(clock.hour), (int)(clock.minute), (int)(clock.second));
     
         // delay_ms(250);
         // delay_ms(250);
