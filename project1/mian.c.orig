@@ -1,0 +1,11 @@
+#include <STC8H.H>
+
+int main(){
+	P5M0 = 0x00;
+	P5M1 = 0x00;
+	P53 = 1;
+	P2M0 = 0x00;
+	P2M1 = 0x00;
+	P27 = 1;
+	while(1){}
+}

@@ -1,0 +1,58 @@
+C51 COMPILER V9.54   MIAN                                                                  11/18/2023 11:09:28 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MIAN
+OBJECT MODULE PLACED IN .\Objects\mian.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE mian.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mian
+                    -.lst) OBJECT(.\Objects\mian.obj)
+
+line level    source
+
+   1          #include <STC8H.H>
+   2          
+   3          void Delay(unsigned int t)
+   4          {
+   5   1              while(t--);
+   6   1      }
+   7          
+   8          void main()
+   9          {
+  10   1              unsigned char Time,i;
+  11   1              while(1)
+  12   1              {
+  13   2                      for(Time=0;Time<100;Time++)             //改变亮灭时间，由暗到亮
+  14   2                      {
+  15   3                              for(i=0;i<20;i++)                       //计次延时
+  16   3                              {
+  17   4                                      P53=0;                                  //LED亮
+  18   4                                      Delay(Time);                    //延时Time
+  19   4                                      P53=1;                                  //LED灭
+  20   4                                      Delay(100-Time);                //延时100-Time
+  21   4                              }
+  22   3                      }
+  23   2                      for(Time=100;Time>0;Time--)             //改变亮灭时间，由亮到暗
+  24   2                      {
+  25   3                              for(i=0;i<20;i++)                       //计次延时
+  26   3                              {
+  27   4                                      P53=0;                                  //LED亮
+  28   4                                      Delay(Time);                    //延时Time
+  29   4                                      P53=1;                                  //LED灭
+  30   4                                      Delay(100-Time);                //延时100-Time
+  31   4                              }
+  32   3                      }
+  33   2              }
+  34   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     68    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
