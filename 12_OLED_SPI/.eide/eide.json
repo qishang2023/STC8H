@@ -1,0 +1,51 @@
+{
+  "name": "12_OLED_SPI",
+  "type": "C51",
+  "dependenceList": [],
+  "srcDirs": [
+    "src",
+    "lib"
+  ],
+  "outDir": "build",
+  "virtualFolder": {
+    "name": "<virtual_root>",
+    "files": [],
+    "folders": []
+  },
+  "miscInfo": {
+    "uid": "1736bc7b191414cc1d6314fb0c289eaa"
+  },
+  "targets": {
+    "Release": {
+      "excludeList": [],
+      "toolchain": "Keil_C51",
+      "compileConfig": {
+        "options": ""
+      },
+      "uploader": "stcgal",
+      "uploadConfig": {
+        "bin": "",
+        "eepromImgPath": "null",
+        "extraOptions": "",
+        "options": ".eide/stc.flash.json"
+      },
+      "uploadConfigMap": {
+        "Custom": {
+          "bin": "",
+          "commandLine": "python ./tools/stcflash.py -p ${port} \"${hexFile}\"",
+          "eraseChipCommand": ""
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [],
+        "libList": [],
+        "sourceDirList": [],
+        "defineList": []
+      }
+    }
+  },
+  "version": "3.3",
+  "deviceName": null,
+  "packDir": null
+}
