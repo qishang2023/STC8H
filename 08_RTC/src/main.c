@@ -4,6 +4,7 @@
 #include "Delay.h"
 #include "bsp_Timer.h"
 #include "bsp_RTC.h"
+#include "bsp_oled_SPI.h"
 
 extern u8 dat[7];
 
@@ -13,7 +14,7 @@ void main(){
     // 存储地址
     u8 mem_addr = 0x02;
     // 用于接收从机传来的数据
-    u8 tem[7]={0x50,0x35,0x21,0x31,0x00,0x92,0x23};
+    u8 tem[7]={0x50,0x35,0x21,0x31,0x00,0x12,0x23};
     // RTC_clock clock;
 	// 保存时间信息
     // u8 second, minute, hour, day, week, month;
@@ -23,44 +24,45 @@ void main(){
     EAXSFR();
 
     bsp_I2C_init();
+    OLED_Init();
     UART_init();
     nixie_init();
     Timer_init();
+
+    OLED_Clear();
 
     EA = 1;
 
 //		4. 通过I2C给RTC时钟芯片写数据
     I2C_WriteNbyte(dev_addr, mem_addr, tem, 7);
 
+
     printf("--------------------------------read\n");
     while(1) {
 
-		//		3. 通过I2C读取RTC时钟芯片数据
-        // I2C_ReadNbyte(dev_addr, mem_addr, &dat, 7);
-        // second = (dat[0] & 0x0F) + ((dat[0] >> 4) & 0x07) * 10;
-        // minute = (dat[1] & 0x0F) + ((dat[1] >> 4) & 0x07) * 10;
-        // hour = (dat[2] & 0x0F) + ((dat[2] >> 4) & 0x03) * 10;
-        // day = (dat[3] & 0x0F) + ((dat[3] >> 4) & 0x03) * 10;
-        // week = dat[4] & 0x07;
-        // month = (dat[5] & 0x0F) + ((dat[5] >> 4) & 0x01) * 10;
-        // year = ((dat[6] >> 4) & 0x0F) * 10 + (dat[6] & 0x0F);
-        // year += ((dat[5] >> 7) & 0x01) * 100 + 1900;
 
-        nixie_display((int)(dat[2] >> 4),1);
+
+/*         nixie_display((int)(dat[2] >> 4),1);
         nixie_display((int)(dat[2] & 0x0F),2);
         nixie_display(21,3);
         nixie_display((int)(dat[1] >> 4),4);
         nixie_display((int)(dat[1] & 0x0F),5); 
         nixie_display(21,6); 
         nixie_display((int)(dat[0] >> 4),7); 
-        nixie_display((int)(dat[0] & 0x0F),8); 
+        nixie_display((int)(dat[0] & 0x0F),8);  */
 
-        // printf("%d:%d:%d \n", (int)(clock.year), (int)(clock.month), (int)(clock.day));
-        // printf("%d:%d:%d \n", (int)(clock.hour), (int)(clock.minute), (int)(clock.second));
-    
-        // delay_ms(250);
-        // delay_ms(250);
-        // delay_ms(250);
-        // delay_ms(250);
+        OLED_ShowNum(90,0, clock.day, 2,16);
+        OLED_ShowChar(72,0, '-');
+        // OLED_ShowNum(54,0, clock.week, 2,16);
+        OLED_ShowNum(54,0, clock.month, 2,16);
+        OLED_ShowChar(36,0, '-');
+        OLED_ShowNum(0,0, clock.year, 4,16);
+
+        OLED_ShowNum(72,2, clock.second, 2,16);
+        OLED_ShowChar(54,2, ':');
+        OLED_ShowNum(36,2, clock.minute, 2,16);
+        OLED_ShowChar(18,2, ':');
+        OLED_ShowNum(0,2, clock.hour, 2,16);
+
     }
 }

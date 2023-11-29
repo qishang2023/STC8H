@@ -39,7 +39,6 @@
     bsp_I2C_init(); */
     OLED_Init();			//≥ı ºªØOLED  
     OLED_Clear()  	; 
-
     t=' ';
     OLED_ShowChinese(0,0,0,16);//÷–
     OLED_ShowChinese(18,0,1,16);//æ∞

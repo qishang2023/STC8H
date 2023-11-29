@@ -27,9 +27,10 @@
 // Copyright(C) 中景园电子2014/3/16
 // All rights reserved
 //******************************************************************************/。
-#include "oled.h"
 // #include "stdlib.h"
 #include "oledfont.h"
+#include "bsp_oled_SPI.h"
+#include "Delay.h"
 // #include "delay.h"
 // OLED的显存
 // 存放格式如下.
@@ -41,7 +42,7 @@
 //[5]0 1 2 3 ... 127
 //[6]0 1 2 3 ... 127
 //[7]0 1 2 3 ... 127
-void delay_ms(unsigned int ms)
+/* void delay_ms(unsigned int ms)
 {
     unsigned int a;
     while (ms) {
@@ -51,7 +52,7 @@ void delay_ms(unsigned int ms)
         ms--;
     }
     return;
-}
+} */
 #if OLED_MODE == 1
 // 向SSD1106写入一个字节。
 // dat:要写入的数据/命令
@@ -231,7 +232,9 @@ void OLED_DrawBMP(unsigned char x0, unsigned char y0, unsigned char x1, unsigned
 // 初始化SSD1306
 void OLED_Init(void)
 {
-
+    P1_MODE_IO_PU(GPIO_Pin_0 | GPIO_Pin_3 | GPIO_Pin_6);
+    P4_MODE_IO_PU(GPIO_Pin_7);
+    P5_MODE_IO_PU(GPIO_Pin_0);
     OLED_RST_Set();
     delay_ms(100);
     OLED_RST_Clr();

@@ -28,7 +28,7 @@
 //All rights reserved
 //******************************************************************************/
 #include "config.h"
-#include "oled.h"
+#include "bsp_oled_SPI.h"
 #include "bmp.h"
 #include "GPIO.h"
 
