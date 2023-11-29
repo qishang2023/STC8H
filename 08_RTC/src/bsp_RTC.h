@@ -17,6 +17,19 @@ typedef struct{
     u16 year;
 }RTC_clock;
 
+typedef struct {
+	u8 hour;
+	u8 enableHour;
+	u8 minute;
+	u8 enableMinute;
+	u8 day;
+	u8 enableDay;
+	u8 weekday;
+	u8 enableWeekday;
+} Alarm_t;
+
+enum TimerFreq{ HZ4096 = 0, HZ64 = 1, HZ1 = 2, HZ1_60 = 3};
+
 void RTC_SetTime(RTC_clock *clock);
 void RTC_ReadTime(RTC_clock *clock);
 
