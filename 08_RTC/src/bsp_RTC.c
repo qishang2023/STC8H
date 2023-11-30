@@ -60,7 +60,7 @@ void RTC_enable_alarm()
     I2C_WriteNbyte(PCF8563_ADDR, 0x01, &config, 1);
 }
 
-void RTC_set_alarm(Alarm_t *a)
+void RTC_set_alarm(Alarm_t a)
 {
     u8 tmp[4];
     tmp[0] = ((a.minute / 10) << 4) + (a.minute % 10);
@@ -137,7 +137,7 @@ void Ext_INT3(void) interrupt INT3_VECTOR
         config[0] &= ~0x08;
         I2C_WriteNbyte(PCF8563_ADDR, 0x01, config, 1);
 
-        PCF8563_on_alarm();
+        // PCF8563_on_alarm();
     }
     // 判断计时器是否被激活 Timer Flag && TIE
     if ((config[0] & 0x04) && (config[0] & 0x01)) {
@@ -145,6 +145,6 @@ void Ext_INT3(void) interrupt INT3_VECTOR
         config[0] &= ~0x04;
         I2C_WriteNbyte(PCF8563_ADDR, 0x01, config, 1);
 
-        PCF8563_on_timer();
+        // PCF8563_on_timer();
     }
 }
