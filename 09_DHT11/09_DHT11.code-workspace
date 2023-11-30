@@ -22,7 +22,8 @@
             "*.cpp": "cpp",
             "*.cxx": "cpp",
             "*.cc": "cpp",
-            "bsp_DHT11.H": "cpp"
+            "bsp_DHT11.H": "cpp",
+            "BSP_OLED_SPI.C": "cpp"
         },
         "C_Cpp.default.configurationProvider": "cl.eide",
         "[yaml]": {

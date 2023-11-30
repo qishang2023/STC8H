@@ -19,7 +19,7 @@ void main(){
         DHT11_get_temperature(&humidity,&temperature);
         start_DHT111 = 0;
        }
-       sprintf(OLED_P6x8Str, "T:%d.%d H:%d.%d", (int)temperature, (int)(temperature*10)%10, (int)humidity, (int)(humidity*10)%10);
+       sprintf(OLED_P6x8Str, "T:%d.%d H:%d%%\0", (int)temperature, (int)(temperature*10)%10, (int)humidity);
        OLED_ShowString(0, 6, OLED_P6x8Str);
 /*         nixie_display((int)temperature/10,1);
         nixie_display((int)temperature%10+10,2);
