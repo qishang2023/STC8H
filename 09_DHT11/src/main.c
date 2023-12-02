@@ -12,7 +12,7 @@ void main(){
     nixie_init();
     OLED_Init();
     EA = 1;
-
+    OLED_Clear();
     while (1)
     {  
        if(start_DHT111 == 1){
