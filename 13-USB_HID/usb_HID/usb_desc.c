@@ -49,8 +49,8 @@ char code CONFIGDESC[41] =
     0x00,                   //bAlternateSetting(0);
     0x02,                   //bNumEndpoints(2);
     0x03,                   //bInterfaceClass(HID);
-    0x00,                   //bInterfaceSubClass(0);
-    0x00,                   //bInterfaceProtocol(0);
+    0x01,                   //bInterfaceSubClass(Boot);      开启boot
+    0x01,                   //bInterfaceProtocol(Keyboard);  键盘
     0x00,                   //iInterface(0);
 
     0x09,                   //bLength(9);
@@ -59,38 +59,62 @@ char code CONFIGDESC[41] =
     0x00,                   //bCountryCode(0);
     0x01,                   //bNumDescriptors(1);
     0x22,                   //bDescriptorType(HID Report);
-    0x1b,0x00,              //wDescriptorLength(27);
+    0x41,0x00,              //wDescriptorLength(65);        修改report描述长度
 
     0x07,                   //bLength(7);
     0x05,                   //bDescriptorType(Endpoint);
     0x81,                   //bEndpointAddress(EndPoint1 as IN);
     0x03,                   //bmAttributes(Interrupt);
-    0x40,0x00,              //wMaxPacketSize(64);
+    0x08,0x00,              //wMaxPacketSize(8);           修改发送报文长度（字节）
     0x0a,                   //bInterval(10ms);
 
     0x07,                   //bLength(7);
     0x05,                   //bDescriptorType(Endpoint);
     0x01,                   //bEndpointAddress(EndPoint1 as OUT);
     0x03,                   //bmAttributes(Interrupt);
-    0x40,0x00,              //wMaxPacketSize(64);
+    0x01,0x00,              //wMaxPacketSize(1);    修改接收报文长度（字节）
     0x0a,                   //bInterval(10ms);
 };
 
-char code HIDREPORTDESC[27] =
+char code HIDREPORTDESC[65] =
 {
-    0x05,0x0c,              //USAGE_PAGE(Consumer);
-    0x09,0x01,              //USAGE(Consumer Control);
+    0x05,0x01,              //USAGE_PAGE(Generic Desktop);
+    0x09,0x06,              //USAGE(Keyboard);
     0xa1,0x01,              //COLLECTION(Application);
+    0x05,0x07,              //  USAGE_PAGE(Keyboard);
+    0x19,0xe0,              //  USAGE_MINIMUM(224);
+    0x29,0xe7,              //  USAGE_MAXIMUM(255);
     0x15,0x00,              //  LOGICAL_MINIMUM(0);
-    0x25,0xff,              //  LOGICAL_MAXIMUM(255);
+    0x25,0x01,              //  LOGICAL_MAXIMUM(1);
+    0x75,0x01,              //  REPORT_SIZE(1);
+    0x95,0x08,              //  REPORT_COUNT(8);
+    0x81,0x02,              //  INPUT(Data,Variable,Absolute);
+    
     0x75,0x08,              //  REPORT_SIZE(8);
-    0x95,0x40,              //  REPORT_COUNT(64);
-    0x09,0x01,              //  USAGE(Consumer Control);
-    0xb1,0x02,              //  FEATURE(Data,Variable);
-    0x09,0x01,              //  USAGE(Consumer Control);
-    0x81,0x02,              //  INPUT(Data,Variable);
-    0x09,0x01,              //  USAGE(Consumer Control);
-    0x91,0x02,              //  OUTPUT(Data,Variable);
+    0x95,0x01,              //  REPORT_COUNT(1);
+    0x81,0x01,              //  INPUT(Constant);
+    
+    0x19,0x00,              //  USAGE_MINIMUM(0);
+    0x29,0x65,              //  USAGE_MAXIMUM(101);
+    0x15,0x00,              //  LOGICAL_MINIMUM(0);
+    0x25,0x65,              //  LOGICAL_MAXIMUM(101);
+    0x75,0x08,              //  REPORT_SIZE(8);
+    0x95,0x06,              //  REPORT_COUNT(6);
+    0x81,0x00,              //  INPUT(Data,Array);
+    
+    0x05,0x08,              //  USAGE_PAGE(LEDs);
+    0x19,0x01,              //  USAGE_MINIMUM(1);
+    0x29,0x03,              //  USAGE_MAXIMUM(3);
+    0x15,0x00,              //  LOGICAL_MINIMUM(0);
+    0x25,0x01,              //  LOGICAL_MAXIMUM(1);
+    0x75,0x01,              //  REPORT_SIZE(1);
+    0x95,0x03,              //  REPORT_COUNT(3);
+    0x91,0x02,              //  OUTPUT(Data,Variable,Absolute);
+    
+    0x75,0x05,              //  REPORT_SIZE(5);
+    0x95,0x01,              //  REPORT_COUNT(1);
+    0x91,0x01,              //  OUTPUT(Constant);
+    
     0xc0,                   //END_COLLECTION;
 };
 

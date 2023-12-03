@@ -263,6 +263,7 @@ extern SETUP Setup;
 extern EPSTATE Ep0State;
 extern BYTE InEpState;
 extern BYTE OutEpState;
+extern BOOL UsbInBusy;
 
 extern BYTE xdata UsbBuffer[256];
 

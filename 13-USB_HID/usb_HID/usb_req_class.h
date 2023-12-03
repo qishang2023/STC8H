@@ -12,6 +12,9 @@
 
 void usb_req_class();
 
+void usb_class_in(BYTE key[]);
+void usb_class_out();
+
 void usb_get_report();
 void usb_set_report();
 void usb_get_idle();
@@ -19,6 +22,7 @@ void usb_set_idle();
 void usb_get_protocol();
 void usb_set_protocol();
 
+extern BYTE usb_keyboard_on_recv(BYTE led);
 extern BYTE bHidIdle;
 
 #endif

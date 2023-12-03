@@ -23,14 +23,17 @@ EPSTATE Ep0State;
 BYTE InEpState;
 BYTE OutEpState;
 BYTE xdata UsbBuffer[256];
+BOOL UsbInBusy;
 
 void usb_init()
 {
+    P_SW2 |= 0x80;
     P3M0 &= ~0x03;
     P3M1 |= 0x03;
 
     IRC48MCR = 0x80;
-    while (!(IRC48MCR & 0x01));
+    while (!(IRC48MCR & 0x01))
+        ;
 
     USBCLK = 0x00;
     USBCON = 0x90;
@@ -42,31 +45,36 @@ void usb_init()
     usb_write_reg(INTRUSBE, 0x07);
     usb_write_reg(POWER, 0x01);
 
-    DeviceState = DEVSTATE_DEFAULT;
+    DeviceState     = DEVSTATE_DEFAULT;
     Ep0State.bState = EPSTATE_IDLE;
-    InEpState = 0x00;
-    OutEpState = 0x00;
+    InEpState       = 0x00;
+    OutEpState      = 0x00;
 
-    IE2 |= 0x80;    //EUSB = 1;
+    UsbInBusy = 0;
+
+    IE2 |= 0x80; // EUSB = 1;
 }
 
 BYTE usb_read_reg(BYTE addr)
 {
-	BYTE dat;
+    BYTE dat;
 
-	while (USBADR & 0x80);
-	USBADR = addr | 0x80;
-	while (USBADR & 0x80);
-	dat = USBDAT;
+    while (USBADR & 0x80)
+        ;
+    USBADR = addr | 0x80;
+    while (USBADR & 0x80)
+        ;
+    dat = USBDAT;
 
-	return dat;
+    return dat;
 }
 
 void usb_write_reg(BYTE addr, BYTE dat)
 {
-	while (USBADR & 0x80);
-	USBADR = addr & 0x7f;
-	USBDAT = dat;
+    while (USBADR & 0x80)
+        ;
+    USBADR = addr & 0x7f;
+    USBDAT = dat;
 }
 
 BYTE usb_read_fifo(BYTE fifo, BYTE *pdat)
@@ -75,9 +83,8 @@ BYTE usb_read_fifo(BYTE fifo, BYTE *pdat)
     BYTE ret;
 
     ret = cnt = usb_read_reg(COUNT0);
-    while (cnt--)
-    {
-    	*pdat++ = usb_read_reg(fifo);
+    while (cnt--) {
+        *pdat++ = usb_read_reg(fifo);
     }
 
     return ret;
@@ -85,8 +92,7 @@ BYTE usb_read_fifo(BYTE fifo, BYTE *pdat)
 
 void usb_write_fifo(BYTE fifo, BYTE *pdat, BYTE cnt)
 {
-	while (cnt--)
-	{
+    while (cnt--) {
         usb_write_reg(fifo, *pdat++);
     }
 }
@@ -98,7 +104,7 @@ void usb_isr() interrupt 25
     BYTE introut;
 
     intrusb = usb_read_reg(INTRUSB);
-    intrin = usb_read_reg(INTRIN1);
+    intrin  = usb_read_reg(INTRIN1);
     introut = usb_read_reg(INTROUT1);
 
     if (intrusb & RSUIF) usb_resume();
@@ -148,7 +154,7 @@ void usb_resume()
 void usb_reset()
 {
     usb_write_reg(FADDR, 0x00);
-    DeviceState = DEVSTATE_DEFAULT;
+    DeviceState     = DEVSTATE_DEFAULT;
     Ep0State.bState = EPSTATE_IDLE;
 
 #ifdef EN_EP1IN
@@ -205,46 +211,41 @@ void usb_setup()
     usb_write_reg(INDEX, 0);
     csr = usb_read_reg(CSR0);
 
-    if (csr & STSTL)
-    {
-        usb_write_reg(CSR0, csr & ~STSTL);  //对自己写 0 清除标志位
+    if (csr & STSTL) {
+        usb_write_reg(CSR0, csr & ~STSTL); // 对自己写 0 清除标志位
         Ep0State.bState = EPSTATE_IDLE;
     }
-    if (csr & SUEND)
-    {
-        usb_write_reg(CSR0, csr | SSUEND);  //对 SSUEND 写 1 清除 SUEND 标志位
+    if (csr & SUEND) {
+        usb_write_reg(CSR0, csr | SSUEND); // 对 SSUEND 写 1 清除 SUEND 标志位
     }
 
-    switch (Ep0State.bState)
-    {
-    case EPSTATE_IDLE:
-        if (csr & OPRDY)
-        {
-            usb_read_fifo(FIFO0, (BYTE *)&Setup);
-            Setup.wLength = reverse2(Setup.wLength);
-            switch (Setup.bmRequestType & REQUEST_MASK)
-            {
-            case STANDARD_REQUEST:
-                usb_req_std();
-                break;
-            case CLASS_REQUEST:
-                usb_req_class();
-                break;
-            case VENDOR_REQUEST:
-                usb_req_vendor();
-                break;
-            default:
-                usb_setup_stall();
-                return;
+    switch (Ep0State.bState) {
+        case EPSTATE_IDLE:
+            if (csr & OPRDY) {
+                usb_read_fifo(FIFO0, (BYTE *)&Setup);
+                Setup.wLength = reverse2(Setup.wLength);
+                switch (Setup.bmRequestType & REQUEST_MASK) {
+                    case STANDARD_REQUEST:
+                        usb_req_std();
+                        break;
+                    case CLASS_REQUEST:
+                        usb_req_class();
+                        break;
+                    case VENDOR_REQUEST:
+                        usb_req_vendor();
+                        break;
+                    default:
+                        usb_setup_stall();
+                        return;
+                }
             }
-        }
-        break;
-    case EPSTATE_DATAIN:
-        usb_ctrl_in();
-        break;
-    case EPSTATE_DATAOUT:
-        usb_ctrl_out();
-        break;
+            break;
+        case EPSTATE_DATAIN:
+            usb_ctrl_in();
+            break;
+        case EPSTATE_DATAOUT:
+            usb_ctrl_out();
+            break;
     }
 }
 
@@ -286,13 +287,10 @@ void usb_ctrl_in()
     usb_write_fifo(FIFO0, Ep0State.pData, cnt);
     Ep0State.wSize -= cnt;
     Ep0State.pData += cnt;
-    if (Ep0State.wSize == 0)
-    {
+    if (Ep0State.wSize == 0) {
         usb_write_reg(CSR0, IPRDY | DATEND);
         Ep0State.bState = EPSTATE_IDLE;
-    }
-    else
-    {
+    } else {
         usb_write_reg(CSR0, IPRDY);
     }
 }
@@ -309,13 +307,10 @@ void usb_ctrl_out()
     cnt = usb_read_fifo(FIFO0, Ep0State.pData);
     Ep0State.wSize -= cnt;
     Ep0State.pData += cnt;
-    if (Ep0State.wSize == 0)
-    {
+    if (Ep0State.wSize == 0) {
         usb_write_reg(CSR0, SOPRDY | DATEND);
         Ep0State.bState = EPSTATE_IDLE;
-    }
-    else
-    {
+    } else {
         usb_write_reg(CSR0, SOPRDY);
     }
 }
@@ -343,14 +338,13 @@ void usb_in_ep1()
 
     usb_write_reg(INDEX, 1);
     csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
+    if (csr & INSTSTL) {
         usb_write_reg(INCSR1, INCLRDT);
     }
-    if (csr & INUNDRUN)
-    {
+    if (csr & INUNDRUN) {
         usb_write_reg(INCSR1, 0);
     }
+    UsbInBusy = 0;
 }
 #endif
 
@@ -361,12 +355,10 @@ void usb_in_ep2()
 
     usb_write_reg(INDEX, 2);
     csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
+    if (csr & INSTSTL) {
         usb_write_reg(INCSR1, INCLRDT);
     }
-    if (csr & INUNDRUN)
-    {
+    if (csr & INUNDRUN) {
         usb_write_reg(INCSR1, 0);
     }
 }
@@ -379,12 +371,10 @@ void usb_in_ep3()
 
     usb_write_reg(INDEX, 3);
     csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
+    if (csr & INSTSTL) {
         usb_write_reg(INCSR1, INCLRDT);
     }
-    if (csr & INUNDRUN)
-    {
+    if (csr & INUNDRUN) {
         usb_write_reg(INCSR1, 0);
     }
 }
@@ -397,12 +387,10 @@ void usb_in_ep4()
 
     usb_write_reg(INDEX, 4);
     csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
+    if (csr & INSTSTL) {
         usb_write_reg(INCSR1, INCLRDT);
     }
-    if (csr & INUNDRUN)
-    {
+    if (csr & INUNDRUN) {
         usb_write_reg(INCSR1, 0);
     }
 }
@@ -415,12 +403,10 @@ void usb_in_ep5()
 
     usb_write_reg(INDEX, 5);
     csr = usb_read_reg(INCSR1);
-    if (csr & INSTSTL)
-    {
+    if (csr & INSTSTL) {
         usb_write_reg(INCSR1, INCLRDT);
     }
-    if (csr & INUNDRUN)
-    {
+    if (csr & INUNDRUN) {
         usb_write_reg(INCSR1, 0);
     }
 }
@@ -433,13 +419,12 @@ void usb_out_ep1()
 
     usb_write_reg(INDEX, 1);
     csr = usb_read_reg(OUTCSR1);
-    if (csr & OUTSTSTL)
-    {
+    if (csr & OUTSTSTL) {
         usb_write_reg(OUTCSR1, OUTCLRDT);
     }
-    if (csr & OUTOPRDY)
-    {
-        usb_bulk_intr_in(UsbBuffer, usb_bulk_intr_out(UsbBuffer, 1), 1);    //功能测试,原路返回
+    if (csr & OUTOPRDY) {
+        //usb_bulk_intr_in(UsbBuffer, usb_bulk_intr_out(UsbBuffer, 1), 1); // 功能测试,原路返回
+        usb_class_out();
     }
 }
 #endif
@@ -451,12 +436,10 @@ void usb_out_ep2()
 
     usb_write_reg(INDEX, 2);
     csr = usb_read_reg(OUTCSR1);
-    if (csr & OUTSTSTL)
-    {
+    if (csr & OUTSTSTL) {
         usb_write_reg(OUTCSR1, OUTCLRDT);
     }
-    if (csr & OUTOPRDY)
-    {
+    if (csr & OUTOPRDY) {
         usb_bulk_intr_out(Ep2OutBuffer, 2);
     }
 }
@@ -469,12 +452,10 @@ void usb_out_ep3()
 
     usb_write_reg(INDEX, 3);
     csr = usb_read_reg(OUTCSR1);
-    if (csr & OUTSTSTL)
-    {
+    if (csr & OUTSTSTL) {
         usb_write_reg(OUTCSR1, OUTCLRDT);
     }
-    if (csr & OUTOPRDY)
-    {
+    if (csr & OUTOPRDY) {
         usb_bulk_intr_out(Ep3OutBuffer, 3);
     }
 }
@@ -487,12 +468,10 @@ void usb_out_ep4()
 
     usb_write_reg(INDEX, 4);
     csr = usb_read_reg(OUTCSR1);
-    if (csr & OUTSTSTL)
-    {
+    if (csr & OUTSTSTL) {
         usb_write_reg(OUTCSR1, OUTCLRDT);
     }
-    if (csr & OUTOPRDY)
-    {
+    if (csr & OUTOPRDY) {
         usb_bulk_intr_out(Ep4OutBuffer, 4);
     }
 }
@@ -505,12 +484,10 @@ void usb_out_ep5()
 
     usb_write_reg(INDEX, 5);
     csr = usb_read_reg(OUTCSR1);
-    if (csr & OUTSTSTL)
-    {
+    if (csr & OUTSTSTL) {
         usb_write_reg(OUTCSR1, OUTCLRDT);
     }
-    if (csr & OUTOPRDY)
-    {
+    if (csr & OUTOPRDY) {
         usb_bulk_intr_out(Ep5OutBuffer, 5);
     }
 }
