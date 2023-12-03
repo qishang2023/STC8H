@@ -13,8 +13,10 @@
 #define KROW4 P41
 
 extern u8 matrix_num;
+extern u16 matrix_state;
 
 void MATRIX_init();
 void matrix_loop();
+void matrix_GetState();
 
 #endif // !__BSP_MATRIX_H

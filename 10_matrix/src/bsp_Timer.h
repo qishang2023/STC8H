@@ -5,6 +5,7 @@
 #include "NVIC.h"
 
 extern u32 sys_time;
+extern u8 key_num;
 
 void Timer_init();
 

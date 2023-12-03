@@ -3,7 +3,7 @@
 
 
 u32 sys_time = 0;
-u8 last_key_stat = 1;
+u8 key_num = 0;
 void Timer_init(){
     TIM_InitTypeDef		TIM_InitStructure;						//结构定义
 
