@@ -75,7 +75,20 @@ char code CONFIGDESC[41] =
     0x01,0x00,              //wMaxPacketSize(1);    修改接收报文长度（字节）
     0x0a,                   //bInterval(10ms);
 };
+/*
+Input Report: 嵌入式设备可以给PC发送8个字节 
+0   Modifier keys 0000 0101 (D0:LCtrl D1:LShift D2:LAlt D3:LGui D4:RCtrl D5:RShift D6:RAlt D7:RGui)
+1	Reserved
+2	Keycode 1
+3	Keycode 2
+4	Keycode 3
+5	Keycode 4
+6	Keycode 5
+7	Keycode 6
 
+Output Report:
+0   LEDs (D0:NumLock D1:CapLock D2:ScrollLock)
+*/
 char code HIDREPORTDESC[65] =
 {
     0x05,0x01,              //USAGE_PAGE(Generic Desktop);

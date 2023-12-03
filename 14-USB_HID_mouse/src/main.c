@@ -14,7 +14,7 @@ u8 key_map[4][4] = {
 
 void scan_and_send()
 {
-    u8 keys[8] = {0};
+    u8 inputs[4] = {0};
     u8 row, col, pos = 2;
     u16 last_states = matrix_state, key_states;
     matrix_GetState();
@@ -27,31 +27,19 @@ void scan_and_send()
     // 数据发生变化, 才发送
 
     // 先判定ModifierKeys  // index: 0
-    if (key_states & (1 << 12)) keys[0] |= 0x01; // LCtrl
-    if (key_states & (1 << 8)) keys[0] |= 0x02;  // LShift
-    if (key_states & (1 << 14)) keys[0] |= 0x04; // LAlt
-    if (key_states & (1 << 13)) keys[0] |= 0x08; // LGui
+    if (key_states & (1 << 9)) inputs[0] |= 0x01;  // LCtrl
+    if (key_states & (1 << 11)) inputs[0] |= 0x02; // LShift
+    if (key_states & (1 << 6)) inputs[0] |= 0x04;  // LAlt
 
-    // 循环扫描其他按键 // index: 2-7
-    for (row = 0; row < 4; row++) { // 每行
+    if (key_states & (1 << 13)) inputs[1] = -10;
+    else if (key_states & (1 << 15)) inputs[1] = 10;
 
-        for (col = 0; col < 4; col++) { // 1行每列
-            u8 usage_id = key_map[row][col];
+    if (key_states & (1 << 10)) inputs[2] = -10;
+    else if (key_states & (1 << 14)) inputs[2] = 10;
 
-            if (usage_id == 0x00) continue; // 遇到Modifier跳过
-
-            // 当前按钮是否按下, 按下了, 加入到keys
-            if (key_states & (1 << (4 * row + col))) {
-                keys[pos++] = usage_id;
-                // pos>7 结束列循环
-                if (pos > 7) break;
-            }
-        }
-        // 结束行循环
-        if (pos > 7) break;
-    }
-
-    usb_class_in(keys);
+    if (key_states & (1 << 3)) inputs[3] = -10;
+    else if (key_states & (1 << 7)) inputs[3] = 10;
+    usb_class_in(inputs);
 }
 
 void usb_keyboard_on_recv(u8 led)
@@ -70,7 +58,6 @@ void main()
     usb_init();
     EA  = 1;
     P45 = 0;
-
     while (1) {
         if (scan_key == 1) {
             scan_and_send();
