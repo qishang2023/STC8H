@@ -7,6 +7,7 @@
 #include "bsp_key.h"
 #include "bsp_battery.h"
 #include "bsp_ranging.h"
+#include "bsp_motor.h"
 
 void UART_init()
 {
@@ -30,11 +31,13 @@ void UART_init()
 
 void sys_init()
 {
+    EAXSFR();
     light_init();
     // track_init();
     UART_init();
     key_init();
     ranging_init();
+    motor_init();
     // battery_init();
 }
 
@@ -49,6 +52,7 @@ void start_main() _task_ 0
 void light() _task_ 1
 {
     float distance;
+    u8 mode = 4;
     while (1) {
         // light_toggle(0);
         // os_wait2(K_TMO,200);
@@ -56,9 +60,39 @@ void light() _task_ 1
         // os_wait2(K_TMO,200);
         if (key_num) {
             key_num = 0;
-            distance = ranging_get_distance();
-            printf("distance = %.2fCM", distance);
+            // distance = ranging_get_distance();
+            // printf("distance = %.2fCM", distance);
             // printf("%.2f",ranging_get_distance());
+       		switch(mode){
+			// case 0:
+			// 	printf("前进\n");
+			// 	Motors_forward(70);
+			// 	break;
+			// case 1:
+			// 	printf("后退\n");
+			// 	Motors_backward(30);
+			// 	break;
+			// case 2:
+			// 	printf("左转\n");
+			// 	Motors_left(60);
+			// 	break;
+			// case 3:
+			// 	printf("右转\n");
+			// 	Motors_right(60);
+			// 	break;
+			case 4:
+				// printf("原地掉头\n");
+				Motors_around(10);
+				break;
+			default:
+				// printf("停止\n");
+				Motors_stop();
+				break;
+		}
+		mode++;
+		if(mode > 5){
+			mode = 4;
+		}
             light_toggle(2);
             // os_wait2(K_TMO, 200);
         }

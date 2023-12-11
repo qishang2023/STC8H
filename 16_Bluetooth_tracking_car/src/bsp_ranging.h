@@ -2,9 +2,6 @@
 #define __BSP_RANGING_H
 
 #include "GPIO.h"
-#include "STC8H_PWM.h"
-#include "Switch.h"
-
 
 //trig 为触发端口
 //echo 为接收端口
