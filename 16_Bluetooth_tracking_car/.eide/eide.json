@@ -1,0 +1,51 @@
+{
+  "name": "16_Bluetooth_tracking_car",
+  "type": "C51",
+  "dependenceList": [],
+  "srcDirs": [
+    "src",
+    "lib"
+  ],
+  "outDir": "build",
+  "virtualFolder": {
+    "name": "<virtual_root>",
+    "files": [],
+    "folders": []
+  },
+  "miscInfo": {
+    "uid": "cfa5b3eb2b75a6870654825a868c002c"
+  },
+  "targets": {
+    "Release": {
+      "excludeList": [],
+      "toolchain": "Keil_C51",
+      "compileConfig": {
+        "options": ""
+      },
+      "uploader": "stcgal",
+      "uploadConfig": {
+        "bin": "",
+        "eepromImgPath": "null",
+        "extraOptions": "",
+        "options": ".eide/stc.flash.json"
+      },
+      "uploadConfigMap": {
+        "Custom": {
+          "bin": "",
+          "commandLine": "python ./tools/stcflash.py -p ${port} \"${hexFile}\"",
+          "eraseChipCommand": ""
+        }
+      },
+      "custom_dep": {
+        "name": "default",
+        "incList": [],
+        "libList": [],
+        "sourceDirList": [],
+        "defineList": []
+      }
+    }
+  },
+  "version": "3.3",
+  "deviceName": null,
+  "packDir": null
+}
