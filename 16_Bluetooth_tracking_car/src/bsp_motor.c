@@ -62,6 +62,66 @@ void Motors_around(int speed)
     motor_config(cfg);
 }
 
+void Motors_forward(int speed)
+{
+    MotorCfg cfg;
+    cfg.LQ_speed = speed;
+    cfg.LH_speed = speed;
+    cfg.RQ_speed = speed;
+    cfg.RH_speed = speed;
+    motor_config(cfg);
+}
+
+void Motors_back(int speed)
+{
+    MotorCfg cfg;
+    cfg.LQ_speed = -speed;
+    cfg.LH_speed = -speed;
+    cfg.RQ_speed = -speed;
+    cfg.RH_speed = -speed;
+    motor_config(cfg);
+}
+
+void Motor_left_mini(int speed)
+{
+    MotorCfg cfg;
+    cfg.LQ_speed = speed/2;
+    cfg.LH_speed = speed/2;
+    cfg.RQ_speed = speed;
+    cfg.RH_speed = speed;
+    motor_config(cfg);
+}
+
+void Motor_right_mini(int speed)
+{
+    MotorCfg cfg;
+    cfg.LQ_speed = speed;
+    cfg.LH_speed = speed;
+    cfg.RQ_speed = speed/2;
+    cfg.RH_speed = speed/2;
+    motor_config(cfg);
+}
+
+void Motor_left(int speed)
+{
+    MotorCfg cfg;
+    cfg.LQ_speed = 0;
+    cfg.LH_speed = 0;
+    cfg.RQ_speed = speed;
+    cfg.RH_speed = speed;
+    motor_config(cfg);
+}
+
+void Motor_right(int speed)
+{
+    MotorCfg cfg;
+    cfg.LQ_speed = speed;
+    cfg.LH_speed = speed;
+    cfg.RQ_speed = 0;
+    cfg.RH_speed = 0;
+    motor_config(cfg);
+}
+
 void Motors_stop()
 {
     MotorCfg cfg;

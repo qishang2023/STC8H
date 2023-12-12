@@ -34,3 +34,46 @@ void trcak_get_state(void)
         track_state |= 0x10;
     }
 }
+
+int Track_get_position(){
+	 // 求出所有压到线的灯的平均数
+	int sum = 0, count = 0, pos = 0;
+	// static 只会初始化一次
+	static int last_pos = 0;
+	
+	if(TRACK_R == 1){
+		sum += 64;
+		count ++;
+	}
+	
+	if(TRACK_MR == 1){
+		sum += 32;
+		count ++;
+	}
+	
+	if(TRACK_M == 1){
+		sum += 0;
+		count ++;
+	}
+	
+	if(TRACK_ML == 1){
+		sum += -32;
+		count ++;
+	}
+	
+	if(TRACK_L == 1){
+		sum += -64;
+		count ++;
+	}
+	
+	if(count == 0){
+		return last_pos;// 上一次的pos
+	}
+	
+	pos = sum / count;
+	
+	// 把当前最新的值记录下来,用于下一次没压到线的时候,返回
+	last_pos = pos;
+	
+	return pos;
+}

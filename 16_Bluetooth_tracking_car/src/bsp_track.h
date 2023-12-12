@@ -13,5 +13,6 @@ extern u8 track_state;
 
 void track_init();
 void trcak_get_state();
+int Track_get_position();
 
 #endif // !__BSP_TRACK_H

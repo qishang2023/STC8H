@@ -27,6 +27,12 @@ typedef struct {
 } MotorCfg;
 
 void motor_init();
+void Motors_forward(int speed);
+void Motors_back(int speed);
+void Motor_left_mini(int speed);
+void Motor_right_mini(int speed);
+void Motor_left(int speed);
+void Motor_right(int speed);
 void Motors_around(int speed);
 void Motors_stop();
 
