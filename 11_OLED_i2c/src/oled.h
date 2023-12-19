@@ -1,7 +1,8 @@
 #ifndef __OLED_H
 #define __OLED_H
 
-#include "config.h"		  	 
+#include "config.h"	
+#include "I2C.h"  	 
  
 #define  u8 unsigned char 
 #define  u16 unsigned int

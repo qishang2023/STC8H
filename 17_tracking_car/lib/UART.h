@@ -20,9 +20,9 @@
 //========================================================================
 
 #define	UART1	1       //使用哪些串口就开对应的定义，不用的串口可屏蔽掉定义，节省资源
-// #define	UART2	2
+#define	UART2	2
 // #define	UART3	3
-#define	UART4	4
+// #define	UART4	4
 
 #define	UART_QUEUE_MODE	0           //设置串口发送模式，0：阻塞模式，1：队列模式
 

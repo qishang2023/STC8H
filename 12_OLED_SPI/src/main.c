@@ -33,20 +33,55 @@
 #include "GPIO.h"
 #include "bsp_RTC.h"
 #include "bsp_DHT11.H"
+#include "UART.h"
+
+void bluetooh_init()
+{
+    COMx_InitDefine COMx_InitStructure;                 // 结构定义
+    COMx_InitStructure.UART_Mode      = UART_8bit_BRTx; // 模式, UART_ShiftRight,UART_8bit_BRTx,UART_9bit,UART_9bit_BRTx
+    COMx_InitStructure.UART_BRT_Use   = BRT_Timer1;     // 选择波特率发生器, BRT_Timer1, BRT_Timer2 (注意: 串口2固定使用BRT_Timer2)
+    COMx_InitStructure.UART_BaudRate  = 115200ul;       // 波特率, 一般 110 ~ 115200
+    COMx_InitStructure.UART_RxEnable  = ENABLE;         // 接收允许,   ENABLE或DISABLE
+    COMx_InitStructure.BaudRateDouble = DISABLE;        // 波特率加倍, ENABLE或DISABLE
+    UART_Configuration(UART1, &COMx_InitStructure);     // 初始化串口1 UART1,UART2,UART3,UART4
+    NVIC_UART1_Init(ENABLE, Priority_1);                // 中断使能, ENABLE/DISABLE; 优先级(低到高) Priority_0,Priority_1,Priority_2,Priority_3
+    UART1_SW(UART1_SW_P30_P31);
+
+    COMx_InitStructure.UART_Mode      = UART_8bit_BRTx; // 模式, UART_ShiftRight,UART_8bit_BRTx,UART_9bit,UART_9bit_BRTx
+    COMx_InitStructure.UART_BRT_Use   = BRT_Timer4;     // 选择波特率发生器, BRT_Timer1, BRT_Timer2 (注意: 串口2固定使用BRT_Timer2)
+    COMx_InitStructure.UART_BaudRate  = 9600ul;         // 波特率, 一般 110 ~ 115200
+    COMx_InitStructure.UART_RxEnable  = ENABLE;         // 接收允许,   ENABLE或DISABLE
+    COMx_InitStructure.BaudRateDouble = DISABLE;        // 波特率加倍, ENABLE或DISABLE
+    UART_Configuration(UART4, &COMx_InitStructure);     // 初始化串口1 UART1,UART2,UART3,UART4
+
+    NVIC_UART4_Init(ENABLE, Priority_2); // 中断使能, ENABLE/DISABLE; 优先级(低到高) Priority_0,Priority_1,Priority_2,Priority_3
+    UART4_SW(UART4_SW_P02_P03);          // 引脚选择, UART4_SW_P02_P03,UART4_SW_P52_P53
+    P0_MODE_IO_PU(GPIO_Pin_2 | GPIO_Pin_3);
+}
+
+void do_control()
+{
+    if (RX4_Buffer[0] != 0x53 || RX4_Buffer[1] != 0x54) {
+        return; // 不是,返回
+    }
+    clock.hour = (RX4_Buffer[7]-48)*10 +(RX4_Buffer[8]-48);
+    clock.minute = (RX4_Buffer[9]-48)*10 +(RX4_Buffer[10]-48);
+    RTC_SetTime(&clock);
+}
 
 int main(void)
 {
     float t;
-    u8 h;
-    u8 buf[20];
+    u8 h, i;
+    u8 buf[15];
     EAXSFR();
     OLED_Init(); // 初始化OLED
     Timer_init();
     bsp_I2C_init();
     DHT11_init();
+    bluetooh_init();
     OLED_Clear();
     EA = 1;
-    OLED_Clear();
     // 设置clock时间
     clock.year   = 2023;
     clock.month  = 12;
@@ -56,8 +91,32 @@ int main(void)
     clock.minute = 48;
     clock.second = 0;
     RTC_SetTime(&clock);
+    printf("start\r\n");
     while (1) {
         OLED_Display_GB2312_string(0, 0, "赵修伟是天才！");
+        if (COM1.RX_TimeOut > 0) {
+            // 超时计数
+            if (--COM1.RX_TimeOut == 0) {
+                if (COM1.RX_Cnt > 0) {
+                    for (i = 0; i < COM1.RX_Cnt; i++) {
+                        TX4_write2buff(RX1_Buffer[i]);
+                    }
+                }
+                COM1.RX_Cnt = 0;
+            }
+        }
+        if (COM4.RX_TimeOut > 0) {
+            // 超时计数
+            if (--COM4.RX_TimeOut == 0) {
+                if (COM4.RX_Cnt > 0) {
+                    for (i = 0; i < COM4.RX_Cnt; i++) {
+                        do_control();
+                        // TX1_write2buff(RX4_Buffer[i]);
+                    }
+                }
+                COM4.RX_Cnt = 0;
+            }
+        }
         if (start_DHT11 == 1) {
             start_DHT11 = 0;
             // OLED_Clear();

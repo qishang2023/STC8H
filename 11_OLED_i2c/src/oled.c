@@ -119,19 +119,13 @@ void Send_Byte(u8 dat)
 //mode:数据/命令标志 0,表示命令;1,表示数据;
 void OLED_WR_Byte(u8 dat,u8 mode)
 {
-    I2C_Start();
-    Send_Byte(0x78);
-    I2C_WaitAck();
-    if(mode) {
-        Send_Byte(0x40);
-    }
-    else {
-        Send_Byte(0x00);
-    }
-    I2C_WaitAck();
-    Send_Byte(dat);
-    I2C_WaitAck();
-    I2C_Stop();
+	u8 reg;
+	if(mode) {
+		reg = 0x40;
+	} else {
+		reg = 0x00;
+	}
+	I2C_WriteNbyte(0x3C << 1, reg, &dat, 1);
 }
 
 //坐标设置

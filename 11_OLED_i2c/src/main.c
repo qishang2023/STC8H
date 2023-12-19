@@ -31,12 +31,13 @@
 #include "oled.h"
 #include "bmp.h"
 #include "GPIO.h"
+#include "bsp_I2C.h"
 
  int main(void)
  {	u8 t;
-    P3_MODE_IO_PU(GPIO_Pin_2 | GPIO_Pin_3);
-/*     EAXSFR();
-    bsp_I2C_init(); */
+    // P3_MODE_IO_PU(GPIO_Pin_2 | GPIO_Pin_3);
+    EAXSFR();
+    bsp_I2C_init();
     OLED_Init();			//≥ı ºªØOLED  
     OLED_Clear()  	; 
     t=' ';
