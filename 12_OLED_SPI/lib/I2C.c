@@ -227,3 +227,28 @@ void I2C_ReadNbyte(u8 dev_addr, u8 mem_addr, u8 *p, u8 number)   /*  DeviceAddre
 	SendNAK();                              //send no ACK	
 	Stop();                                 //发送停止命令
 }
+
+void illum_ReadNbyte(u8 dev_addr, u8 *p, u8 number)   /*  DeviceAddress,WordAddress,First Data Address,Byte lenth   */
+{
+	Start();                                //发送起始命令
+	SendData(dev_addr|1);                   //发送设备地址+读命令
+	RecvACK();
+	do
+	{
+		*p = RecvData();
+		p++;
+		if(number != 1) SendACK();          //send ACK
+	}
+	while(--number);
+	SendNAK();                              //send no ACK	
+	Stop();                                 //发送停止命令
+}
+
+void illum_send_byte(u8 dat){
+	Start();  
+	SendData(0x46);
+	RecvACK();
+	SendData(dat);
+	RecvACK();
+	Stop(); 
+}

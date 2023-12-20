@@ -79,6 +79,8 @@ void I2C_WriteNbyte(u8 dev_addr, u8 mem_addr, u8 *p, u8 number);
 void I2C_ReadNbyte(u8 dev_addr, u8 mem_addr, u8 *p, u8 number);
 u8 Get_MSBusy_Status(void);
 void SendCmdData(u8 cmd, u8 dat);
+void illum_ReadNbyte(u8 dev_addr, u8 *p, u8 number) ;
+void illum_send_byte(u8 dat);
 
 #endif
 

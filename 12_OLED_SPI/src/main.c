@@ -5,6 +5,7 @@
 #include "bsp_RTC.h"
 #include "bsp_DHT11.H"
 #include "UART.h"
+#include "bsp_illum.h"
 
 void bluetooh_init()
 {
@@ -45,10 +46,11 @@ int main(void)
     float t;
     u8 h, i;
     u8 buf[15];
-    EAXSFR();
+    EAXSFR();    
     OLED_Init(); 
     Timer_init();
     bsp_I2C_init();
+    bsp_illum_init();
     DHT11_init();
     bluetooh_init();
     OLED_Clear();
@@ -62,8 +64,9 @@ int main(void)
     clock.second = 0;
     RTC_SetTime(&clock);
     printf("start\r\n");
+    delay_ms(180);
     while (1) {
-        OLED_Display_GB2312_string(0, 0, "赵修伟是天才！");
+        // OLED_Display_GB2312_string(0, 0, "赵修伟是天才！");
         if (COM1.RX_TimeOut > 0) {
             if (--COM1.RX_TimeOut == 0) {
                 if (COM1.RX_Cnt > 0) {
@@ -85,8 +88,11 @@ int main(void)
             }
         }
         if (start_DHT11 == 1) {
+            OLED_Clear();
             start_DHT11 = 0;
-            // OLED_Clear();
+            bsp_illum_get_data();
+            sprintf((char *)buf, "光照：%03d", illum_num);
+            OLED_Display_GB2312_string(0, 0, buf);
             if (DHT11_get_temperature(&h, &t) == 0) {
                 sprintf((char *)buf, "温度：%.1f", t);
                 OLED_Display_GB2312_string(0, 2, buf);
