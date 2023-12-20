@@ -93,15 +93,16 @@ int main(void)
                 sprintf((char *)buf, "湿度：%d%%", (int)h);
                 OLED_Display_GB2312_string(0, 4, buf);
             }
-            if (clock.minute <= 9 && clock.second <= 9) {
-                sprintf((char *)buf, "时间：%d:0%d:0%d\0", (int)clock.hour, (int)clock.minute, (int)clock.second);
+/*             if (clock.minute <= 9 && clock.second <= 9) {
+                sprintf((char *)buf, "时间：%d:0%d:0%d  \0", (int)clock.hour, (int)clock.minute, (int)clock.second);
             } else if (clock.minute <= 9) {
-                sprintf((char *)buf, "时间：%d:0%d:%d\0", (int)clock.hour, (int)clock.minute, (int)clock.second);
+                sprintf((char *)buf, "时间：%d:0%d:%d  \0", (int)clock.hour, (int)clock.minute, (int)clock.second);
             } else if (clock.second <= 9) {
-                sprintf((char *)buf, "时间：%d:%d:0%d\0", (int)clock.hour, (int)clock.minute, (int)clock.second);
+                sprintf((char *)buf, "时间：%d:%d:0%d  \0", (int)clock.hour, (int)clock.minute, (int)clock.second);
             } else {
-                sprintf((char *)buf, "时间：%d:%d:%d\0", (int)clock.hour, (int)clock.minute, (int)clock.second);
-            }
+                sprintf((char *)buf, "时间：%d:%d:%d  \0", (int)clock.hour, (int)clock.minute, (int)clock.second);
+            } */
+            sprintf((char *)buf, "时间：%02d:%02d:%02d", (int)clock.hour, (int)clock.minute, (int)clock.second);
             OLED_Display_GB2312_string(0, 6, buf);
         }
     }
