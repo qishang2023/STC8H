@@ -6,6 +6,7 @@
 #include "bsp_DHT11.H"
 #include "UART.h"
 #include "bsp_illum.h"
+#include "bsp_mois.h"
 
 void bluetooh_init()
 {
@@ -50,9 +51,10 @@ int main(void)
     OLED_Init(); 
     Timer_init();
     bsp_I2C_init();
-    bsp_illum_init();
+    // bsp_illum_init();
     DHT11_init();
     bluetooh_init();
+    mois_init();
     OLED_Clear();
     EA = 1;
     clock.year   = 2023;
@@ -88,10 +90,10 @@ int main(void)
             }
         }
         if (start_DHT11 == 1) {
-            OLED_Clear();
+            // OLED_Clear();
             start_DHT11 = 0;
-            bsp_illum_get_data();
-            sprintf((char *)buf, "π‚’’£∫%03d", illum_num);
+            // bsp_illum_get_data();
+            sprintf((char *)buf, "µÁ—π£∫%.2f", mois_get());
             OLED_Display_GB2312_string(0, 0, buf);
             if (DHT11_get_temperature(&h, &t) == 0) {
                 sprintf((char *)buf, "Œ¬∂»£∫%.1f", t);
